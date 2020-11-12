@@ -1,5 +1,5 @@
 import { AppSecrectProviderInterface } from './app-secret-provider-interface';
-import { AppSecretMissingError } from '../Error/app-secret-missing-error';
+import { AppSecretMissingError } from '../error/app-secret-missing-error';
 
 export class EnvironmentAppProvider implements AppSecrectProviderInterface {
     constructor(readonly envVariableName :string) {}

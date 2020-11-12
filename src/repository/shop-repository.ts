@@ -48,6 +48,16 @@ export default class ShopRepository {
     }
 
     /**
+     * Returns a shop from the database
+     *
+     * @param {string} shopId
+     * @returns {iShop}
+     */
+    async getShop(shopId: string): Promise<iShop> {
+        return this.adapter.get(shopId);
+    }
+
+    /**
      * Removes a shop using the provided shop id
      *
      * @param {string} shopId

@@ -4,6 +4,7 @@ import ShopRepository from "./repository/shop-repository";
 import { EventEmitter } from "events";
 import { ConnectionInterface} from "./database/connection-interface";
 import MongoDbAdapter from "./database/mongodb-adapter";
+export * from './app-secret';
 
 declare interface iAppTemplateOptions {
     confirmRoute: string,

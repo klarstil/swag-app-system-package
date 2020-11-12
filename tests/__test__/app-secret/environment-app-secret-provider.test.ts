@@ -1,5 +1,5 @@
-import { EnvironmentAppProvider } from '@swag-app-system-package/AppSecret/environment-app-secret-provider';
-import { AppSecretMissingError } from '@swag-app-system-package/Error/app-secret-missing-error';
+import { EnvironmentAppProvider } from '@swag-app-system-package/app-secret/environment-app-secret-provider';
+import { AppSecretMissingError } from '@swag-app-system-package/error/app-secret-missing-error';
 
 describe('EnvironmentAppProvider', () => {
     const envVariableName = 'test_app_secret';

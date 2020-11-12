@@ -1,4 +1,4 @@
-import { ConstantAppSecretProvider } from '@swag-app-system-package/AppSecret/constant-app-secret-provider';
+import { ConstantAppSecretProvider } from '@swag-app-system-package/app-secret/constant-app-secret-provider';
 
 describe('ConstantAppSecretProvider', () => {
     test('it returns the secret provided in its constructor', () => {
