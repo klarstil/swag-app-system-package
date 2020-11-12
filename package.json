@@ -1,12 +1,16 @@
 {
     "name": "@shopware-ag/swag-app-system-package",
     "version": "1.0.0",
-    "description": "",
+    "description": "App template which allows you to write your own apps for the Shopware AppSystem",
     "scripts": {
+        "prepublishOnly": "npm run build",
         "watch": "nodemon  src/index.ts --ignore '*.json'",
-        "build": "tsc --project . -declaration"
+        "build": "tsc --project . -declaration",
+        "test": "jest",
+        "test:watch": "jest --watchAll"
     },
     "main": "build/index.js",
+    "types": "build/index.d.ts",
     "directories": {
         "examples": "./examples",
         "test": "./tests"
@@ -14,18 +18,31 @@
     "files": [
         "build/"
     ],
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "keywords": [
+        "shopware",
+        "appsystem",
+        "apptemplate"
+    ],
+    "author": "klarstil",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/klarstil/swag-app-system-package.git"
+    },
+    "license": "MIT",
     "dependencies": {},
     "devDependencies": {
         "@types/express": "^4.17.9",
         "@types/jest": "^26.0.15",
+        "@types/mongodb": "^3.5.33",
         "@types/node": "^14.14.7",
         "jest": "^26.6.3",
         "nodemon": "^2.0.6",
         "ts-jest": "^26.4.4",
         "ts-node": "^9.0.0",
         "typescript": "^4.0.5"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
     }
 }

@@ -43,8 +43,8 @@ export default class ShopRepository {
      * @param {iShop} shop
      * @returns {void}
      */
-    createShop(shop: iShop): void {
-        this.adapter.create(shop);
+    async createShop(shop: iShop): Promise<void> {
+        await this.adapter.create(shop);
     }
 
     /**
@@ -53,8 +53,8 @@ export default class ShopRepository {
      * @param {string} shopId
      * @returns {void}
      */
-    removeShopByShopId(shopId: string): void {
-        this.adapter.delete(shopId);
+    async removeShopByShopId(shopId: string): Promise<void> {
+        await this.adapter.delete(shopId);
     }
 
     /**
@@ -63,8 +63,8 @@ export default class ShopRepository {
      * @param {string} shopId
      * @returns {string}
      */
-    getSecretByShopId(shopId: string): string {
-        const shop = this.adapter.get(shopId);
+    async getSecretByShopId(shopId: string): Promise<string> {
+        const shop = await this.adapter.get(shopId);
         return shop.shopSecret;
     }
 
@@ -74,8 +74,8 @@ export default class ShopRepository {
      * @param {string} shopId
      * @returns {Credentials}
      */
-    getCredentialsForShopId(shopId: string): Credentials {
-        const shop = this.adapter.get(shopId);
+    async getCredentialsForShopId(shopId: string): Promise<Credentials> {
+        const shop = await this.adapter.get(shopId);
 
         return {
             shopUrl: shop.shopUrl,

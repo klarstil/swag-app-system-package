@@ -2,6 +2,7 @@ import { Express, Request, Response } from "express";
 import Authenticator from "./authenficator";
 import ShopRepository from "./repository/shop-repository";
 import { ConnectionInterface} from "./database/connection-interface";
+import MongoDbAdapter from "./database/mongodb-adapter";
 
 declare interface iAppTemplateOptions {
     confirmRoute: string,
@@ -53,7 +54,7 @@ class AppTemplate {
      * @param {Response} response
      * @returns {void}
      */
-    onRegisterRoute(request: Request, response: Response): void {
+    async onRegisterRoute(request: Request, response: Response): Promise<void> {
         const shopUrl = request.query['shop-url'] as string;
         const shopId = request.query['shop-id'] as string;
 
@@ -71,7 +72,7 @@ class AppTemplate {
         const shopSecret = Authenticator.generateSecretForShop();
         const name = this.options.appName;
 
-        this.shopRepository.createShop({
+        await this.shopRepository.createShop({
             shopId,
             shopUrl,
             shopSecret
@@ -98,8 +99,8 @@ class AppTemplate {
      * @param {Response} response
      * @returns {void}
      */
-    onConfirmRoute(request: Request, response: Response): void {
-        const shopSecret = this.shopRepository.getSecretByShopId(request.body.shopId);
+    async onConfirmRoute(request: Request, response: Response): Promise<void> {
+        const shopSecret = await this.shopRepository.getSecretByShopId(request.body.shopId);
 
         if (!Authenticator.authenticatePostRequest({
             shopSecret,
@@ -112,7 +113,7 @@ class AppTemplate {
             return;
         }
 
-        this.shopRepository.updateAccessKeysForShop(request.body);
+        await this.shopRepository.updateAccessKeysForShop(request.body);
 
         response.end();
     }
@@ -123,4 +124,5 @@ export {
     Authenticator,
     ShopRepository,
     ConnectionInterface,
+    MongoDbAdapter
 };

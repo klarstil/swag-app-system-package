@@ -17,28 +17,36 @@ export default class LowDbAdapter implements ConnectionInterface {
         this.tableName = tableName;
     }
 
-    create(values: iShop): void {
+    create(values: iShop): Promise<void> {
         db.get(this.tableName)
             .push(values)
             .write();
+
+        return Promise.resolve();
     }
 
-    get(shopId: string): iShop {
-        return db.get(this.tableName)
+    get(shopId: string): Promise<iShop> {
+        const result: iShop = db.get(this.tableName)
             .find({ shopId: shopId })
             .value();
+
+        return Promise.resolve(result);
     }
 
-    delete(shopId: string): void {
+    delete(shopId: string): Promise<void> {
         db.get(this.tableName)
             .remove({ shopId: shopId })
             .write();
+
+        return Promise.resolve();
     }
 
-    update(values: iShop): void {
+    update(values: iShop): Promise<void> {
         db.get(this.tableName)
             .find({ shopId: values.shopId })
             .assign(values)
             .write();
+
+        return Promise.resolve();
     }
 }

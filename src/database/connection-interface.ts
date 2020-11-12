@@ -1,8 +1,8 @@
 import { iShop } from "../repository/shop-repository";
 
 export declare interface ConnectionInterface {
-    create(values: object): void,
-    get(shopId: string): iShop
-    delete(shopId: string): any,
-    update(values: object): any
+    create(values: iShop): Promise<void>,
+    get(shopId: string): Promise<iShop>
+    delete(shopId: string): Promise<void>,
+    update(values: iShop): Promise<void>
 }
