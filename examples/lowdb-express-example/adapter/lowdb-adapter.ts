@@ -1,5 +1,5 @@
-import { ConnectionInterface } from "./connection-interface";
-import { iShop } from "../repository/shop-repository";
+import { ConnectionInterface } from "@shopware-ag/swag-app-system-package";
+import { iShop } from "@shopware-ag/swag-app-system-package/build/repository/shop-repository";
 
 // @ts-ignore
 import low from 'lowdb';
