@@ -1,13 +1,19 @@
 import { Request } from "express";
-import { createHmac } from "crypto";
+import {createHmac, randomBytes} from "crypto";
 
 declare interface iGenerateProof {
     shopId: string;
     shopUrl: string;
     name: string,
     confirmationUrl: string
-    secret: string,
+    shopSecret: string,
     appSecret: string;
+}
+
+declare interface iGenerateProofAnswer {
+    proof: string,
+    secret: string,
+    confirmation_url: string
 }
 
 declare interface iAuthenticateRegisterRequest {
@@ -49,9 +55,8 @@ export default class Authenticator {
         signature,
         body,
         shopSecret
-    }: iAuthenticatePostRequest) {
+    }: iAuthenticatePostRequest): boolean {
         if (!signature || signature.length <= 0) {
-            console.log('signature not found');
             return false;
         }
 
@@ -65,17 +70,21 @@ export default class Authenticator {
             )
             .digest("hex");
 
+        console.log({ hash });
+        console.log({ signature });
+        console.log({ body });
+
         return hash === signature;
     }
 
     static generateProof({
         shopId,
         shopUrl,
-        secret,
+        shopSecret,
         appSecret,
         name,
         confirmationUrl
-    }: iGenerateProof): any {
+    }: iGenerateProof): iGenerateProofAnswer {
         const hmac = createHmac('sha256', appSecret);
         const proof = hmac.update(
             Buffer.from(
@@ -86,8 +95,12 @@ export default class Authenticator {
 
         return {
             proof: proof,
-            secret: secret,
+            secret: shopSecret,
             confirmation_url: confirmationUrl
         };
+    }
+
+    static generateSecretForShop(): string {
+        return randomBytes(16).toString('hex');
     }
 }
