@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/app-system/0.1.0/src/Core/Content/App/Manifest/Schema/manifest-1.0.xsd">
+    <meta>
+        <name>NodeDockerAppExample</name>
+        <label>App example with node and docker</label>
+        <label lang="de-DE">Appbeispiel mit node und docker</label>
+        <description>This is an example how to use swag-app-systeme-package with node and docker</description>
+        <description lang="de-DE">This is an example how to use swag-app-systeme-package with node and docker</description>
+        <author>shopware AG</author>
+        <copyright>(c) by shopware AG</copyright>
+        <version>1.0.0</version>
+    </meta>
+    <setup>
+        <secret>thisIsNotSoSafe</secrect>
+        <registrationUrl>exampleapp/registration</registrationUrl>
+    </setup>
+    <permissions/>
+</manifest>
