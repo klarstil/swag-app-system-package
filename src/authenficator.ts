@@ -29,7 +29,7 @@ declare interface iAuthenticatePostRequest {
     shopSecret: string
 }
 
-export default class Authenticator {
+export class Authenticator {
     /**
      * Verifies the register request from the app system.
      *

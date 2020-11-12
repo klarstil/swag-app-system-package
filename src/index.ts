@@ -1,9 +1,9 @@
 import { Express, Request, Response } from "express";
-import Authenticator from "./authenficator";
-import ShopRepository from "./repository/shop-repository";
+import { Authenticator } from "./authenficator";
+import { ShopRepository } from "./repository/shop-repository";
 import { EventEmitter } from "events";
 import { ConnectionInterface} from "./database/connection-interface";
-import MongoDbAdapter from "./database/mongodb-adapter";
+import { MongoDbAdapter } from "./database/mongodb-adapter";
 export * from './app-secret';
 
 declare interface iAppTemplateOptions {

@@ -2,7 +2,7 @@ import { ConnectionInterface } from "./connection-interface";
 import { Collection } from "mongodb";
 import { Shop } from "../repository/shop-repository";
 
-export default class MongoDbAdapter implements ConnectionInterface {
+export class MongoDbAdapter implements ConnectionInterface {
     collection: Collection;
 
     constructor(collection: Collection) {

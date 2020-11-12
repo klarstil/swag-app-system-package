@@ -14,7 +14,7 @@ declare interface Credentials {
     secretKey: string,
 }
 
-export default class ShopRepository {
+export class ShopRepository {
     adapter: ConnectionInterface;
 
     /**

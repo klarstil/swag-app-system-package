@@ -1,4 +1,4 @@
-import ShopRepository, { Shop } from '@swag-app-system-package/repository/shop-repository';
+import { ShopRepository, Shop } from '@swag-app-system-package/repository/shop-repository';
 import { InMemoryAdapter} from "../database/in-memory-adapter";
 
 describe('ShopRepostory', () => {
@@ -89,7 +89,6 @@ describe('ShopRepostory', () => {
             shopUrl: shop.shopUrl,
             appSecret: shop.shopSecret as string,
             secretKey: shop.secretKey as string,
-            token: null
         });
     });
 
