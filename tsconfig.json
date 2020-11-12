@@ -12,5 +12,5 @@
             "@swag-app-system-package/*": ["./*"]
         }
     },
-    "exclude": ["node_modules", "examples", "**/*.spec.ts", "build"]
+    "include": ["src"]
 }

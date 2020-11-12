@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 
 const url = 'mongodb://mongodb:mongodb@localhost:27017';
-const client = new MongoClient(url);
+const client = new MongoClient(url, { useUnifiedTopology: true });
 
 const run = async () => {
     await client.connect();

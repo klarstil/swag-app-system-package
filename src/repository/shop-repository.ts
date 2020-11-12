@@ -33,8 +33,8 @@ export default class ShopRepository {
      * @param {iShop} shop
      * @returns {void}
      */
-    updateAccessKeysForShop(shop: iShop): void {
-        this.adapter.update(shop);
+    async updateAccessKeysForShop(shop: iShop): Promise<void> {
+        await this.adapter.update(shop);
     }
 
     /**
