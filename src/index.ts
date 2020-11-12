@@ -1,17 +1,23 @@
 import { Express, Request, Response } from "express";
 import Authenticator from "./authenficator";
 import ShopRepository from "./repository/shop-repository";
+import { EventEmitter } from "events";
 import { ConnectionInterface} from "./database/connection-interface";
 import MongoDbAdapter from "./database/mongodb-adapter";
 
 declare interface iAppTemplateOptions {
     confirmRoute: string,
     registerRoute: string,
+    appInstalledRoute?: string,
+    appDeletedRoute?: string,
+    appUpdatedRoute?: string,
+    appActivatedRoute?: string,
+    appDeactivatedRoute?: string,
     appSecret: string,
     appName: string
 }
 
-class AppTemplate {
+class AppTemplate extends EventEmitter {
     app: Express;
     options: iAppTemplateOptions;
     shopRepository: ShopRepository;
@@ -25,6 +31,8 @@ class AppTemplate {
      * @param {iAppTemplateOptions} options
      */
     constructor(app: Express, adapter: ConnectionInterface, options: iAppTemplateOptions) {
+        super();
+
         this.app = app;
         this.options = options;
         this.shopRepository = new ShopRepository(adapter);
@@ -42,6 +50,23 @@ class AppTemplate {
     registerExpressRoutes(app: Express): boolean {
         app.get(this.options.registerRoute, this.onRegisterRoute.bind(this));
         app.post(this.options.confirmRoute, this.onConfirmRoute.bind(this));
+
+        if (this.options.appDeletedRoute) {
+            app.post(this.options.appDeletedRoute, this.onAppDeleteRoute.bind(this));
+        }
+
+        const additionalLifeCycleRoutes = [
+            this.options.appActivatedRoute,
+            this.options.appDeactivatedRoute,
+            this.options.appInstalledRoute,
+            this.options.appUpdatedRoute
+        ].filter(Boolean);
+
+        if (additionalLifeCycleRoutes.length) {
+            additionalLifeCycleRoutes.forEach((routeName) => {
+                app.post(routeName as string, this.onAppLifecycleRoute.bind(this));
+            });
+        }
 
         return true;
     }
@@ -100,15 +125,9 @@ class AppTemplate {
      * @returns {void}
      */
     async onConfirmRoute(request: Request, response: Response): Promise<void> {
-        const shopSecret = await this.shopRepository.getSecretByShopId(request.body.shopId);
+        const isValid = await this.authenticatePostRequest(request, request.body.shopId);
 
-        if (!Authenticator.authenticatePostRequest({
-            shopSecret,
-            signature: request.get('shopware-shop-signature') as string,
-            body: JSON.stringify(request.body).replace(/\//g, (str) => {
-                return `\\${str}`;
-            })
-        })) {
+        if (!isValid) {
             response.status(401).end();
             return;
         }
@@ -116,6 +135,67 @@ class AppTemplate {
         await this.shopRepository.updateAccessKeysForShop(request.body);
 
         response.end();
+    }
+
+    /**
+     * Route handler for the app deleted route which verifies the post request and removes the shop.
+     *
+     * @param {Request} request
+     * @param {response} response
+     * @returns {void}
+     */
+    async onAppDeleteRoute(request: Request, response: Response) {
+        const isValid = await this.authenticatePostRequest(request, request.body.source.shopId);
+
+        if (!isValid) {
+            response.status(401).end();
+            return;
+        }
+
+        this.emit(request.body.data.event, request.body);
+
+        await this.shopRepository.removeShopByShopId(request.body.source.shopId);
+        response.end();
+    }
+
+    /**
+     * Route handler for the individual lifecycle routes which verifies the post request and trigger an event.
+     *
+     * @param {Request} request
+     * @param {Response} response
+     * @returns {void}
+     */
+    async onAppLifecycleRoute(request: Request, response: Response) {
+        const isValid = await this.authenticatePostRequest(request, request.body.source.shopId);
+
+        if (!isValid) {
+            response.status(401).end();
+            return;
+        }
+
+        this.emit(request.body.data.event, request.body);
+
+        response.end();
+    }
+
+    /**
+     * Helper method which validates if a post request is authenticated correctly.
+     *
+     * @private
+     * @param {Request} request
+     * @param {String} shopId
+     * @returns {boolean}
+     */
+    async authenticatePostRequest(request: Request, shopId: string): Promise<boolean> {
+        const shopSecret = await this.shopRepository.getSecretByShopId(shopId);
+
+        return Authenticator.authenticatePostRequest({
+            shopSecret,
+            signature: request.get('shopware-shop-signature') as string,
+            body: JSON.stringify(request.body).replace(/\//g, (str) => {
+                return `\\${str}`;
+            })
+        });
     }
 }
 

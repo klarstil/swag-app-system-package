@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build && rm -rf db.json && node build",
     "build": "tsc --project ./"
   },
   "keywords": [],

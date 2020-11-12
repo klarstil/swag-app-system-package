@@ -10,11 +10,36 @@ const PORT = process.env.APP_PORT || 8000;
 const app = express();
 app.use(express.json());
 
-new AppTemplate(app, new LowDbAdapter(), {
+const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
     confirmRoute: '/confirm',
     registerRoute: '/registration',
+    appDeletedRoute: '/app-deleted-webhook',
+    appInstalledRoute: '/app-installed-webhook',
+    appUpdatedRoute: '/app-updated-webhook',
+    appActivatedRoute: '/app-activated-webhook',
+    appDeactivatedRoute: '/app-deactivated-webhook',
     appSecret: process.env.APP_SECRET as string,
     appName: process.env.APP_NAME as string
+});
+
+appTemplate.on('app.deleted', () => {
+    console.log('onAppDeleted');
+});
+
+appTemplate.on('app.installed', () => {
+    console.log('onAppInstalled');
+});
+
+appTemplate.on('app.updated', () => {
+    console.log('onAppUpdated');
+});
+
+appTemplate.on('app.activated', () => {
+    console.log('onAppActivated');
+});
+
+appTemplate.on('app.deactivated', () => {
+    console.log('onAppDeactivated');
 });
 
 app.listen(PORT, () => {
