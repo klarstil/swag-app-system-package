@@ -1,6 +1,6 @@
 import { ConnectionInterface } from "../database/connection-interface";
 
-export declare interface iShop {
+export declare interface Shop {
     shopId: string
     shopUrl: string,
     shopSecret: string
@@ -12,10 +12,9 @@ declare interface Credentials {
     shopUrl: string,
     appSecret: string,
     secretKey: string,
-    token: string | null
 }
 
-export default class ShopRepository {
+export class ShopRepository {
     adapter: ConnectionInterface;
 
     /**
@@ -30,20 +29,20 @@ export default class ShopRepository {
     /**
      * Updates the access keys for the shop
      *
-     * @param {iShop} shop
+     * @param {Shop} shop
      * @returns {void}
      */
-    async updateAccessKeysForShop(shop: iShop): Promise<void> {
+    async updateAccessKeysForShop(shop: Shop): Promise<void> {
         await this.adapter.update(shop);
     }
 
     /**
      * Creates a new shop
      *
-     * @param {iShop} shop
+     * @param {Shop} shop
      * @returns {void}
      */
-    async createShop(shop: iShop): Promise<void> {
+    async createShop(shop: Shop): Promise<void> {
         await this.adapter.create(shop);
     }
 
@@ -51,9 +50,9 @@ export default class ShopRepository {
      * Returns a shop from the database
      *
      * @param {string} shopId
-     * @returns {iShop}
+     * @returns {Shop}
      */
-    async getShop(shopId: string): Promise<iShop> {
+    async getShop(shopId: string): Promise<Shop> {
         return this.adapter.get(shopId);
     }
 
@@ -91,7 +90,6 @@ export default class ShopRepository {
             shopUrl: shop.shopUrl,
             appSecret: shop.shopSecret as string,
             secretKey: shop.secretKey as string,
-            token: null
         };
     }
 }

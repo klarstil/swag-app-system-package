@@ -1,8 +1,8 @@
 import { ConnectionInterface } from "./connection-interface";
 import { Collection } from "mongodb";
-import { iShop } from "../repository/shop-repository";
+import { Shop } from "../repository/shop-repository";
 
-export default class MongoDbAdapter implements ConnectionInterface {
+export class MongoDbAdapter implements ConnectionInterface {
     collection: Collection;
 
     constructor(collection: Collection) {
@@ -14,8 +14,8 @@ export default class MongoDbAdapter implements ConnectionInterface {
         return Promise.resolve();
     }
 
-    async get(shopId: string): Promise<iShop> {
-        return await this.collection.findOne({ shopId: shopId }) as iShop;
+    async get(shopId: string): Promise<Shop> {
+        return await this.collection.findOne({ shopId: shopId }) as Shop;
     }
 
     async delete(shopId: string): Promise<void> {
@@ -23,7 +23,7 @@ export default class MongoDbAdapter implements ConnectionInterface {
         return Promise.resolve();
     }
 
-    async update(values: iShop): Promise<void> {
+    async update(values: Shop): Promise<void> {
         const filter = { shopId: values.shopId };
         await this.collection.updateOne(filter, { $set: values }, { upsert: false });
         return Promise.resolve();

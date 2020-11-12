@@ -1,11 +1,11 @@
 import { InMemoryAdapter } from './in-memory-adapter';
-import { iShop } from '@swag-app-system-package/repository/shop-repository';
+import { Shop } from '@swag-app-system-package/repository/shop-repository';
 
 describe('InMemoryAdapter', () => {
     test('it can create a shop', async () => {
         const inMemoryAdapter = new InMemoryAdapter();
 
-        const shop: iShop = {
+        const shop: Shop = {
             shopId: '1',
             shopUrl: 'http://shop.url',
             shopSecret: 'imSafe'
@@ -20,7 +20,7 @@ describe('InMemoryAdapter', () => {
     test('it returns a created shop', async () => {
         const inMemoryAdapter = new InMemoryAdapter();
 
-        const shop: iShop = {
+        const shop: Shop = {
             shopId: '1',
             shopUrl: 'http://shop.url',
             shopSecret: 'imSafe'
@@ -44,7 +44,7 @@ describe('InMemoryAdapter', () => {
     test('it can delete a shop', async () => {
         const inMemoryAdapter = new InMemoryAdapter();
 
-        const shop: iShop = {
+        const shop: Shop = {
             shopId: '1',
             shopUrl: 'http://shop.url',
             shopSecret: 'imSafe'
@@ -60,7 +60,7 @@ describe('InMemoryAdapter', () => {
     test('it updates a shop', async () => {
         const inMemoryAdapter = new InMemoryAdapter();
 
-        const shop: iShop = {
+        const shop: Shop = {
             shopId: '1',
             shopUrl: 'http://shop.url',
             shopSecret: 'imSafe'
