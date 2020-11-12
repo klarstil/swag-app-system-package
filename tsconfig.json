@@ -6,7 +6,11 @@
         "outDir": "./build",
         "esModuleInterop": true,
         "declaration": true,
-        "strict": true
+        "strict": true,
+        "baseUrl": "./src",
+        "paths": {
+            "@swag-app-system-package/*": ["./*"]
+        }
     },
     "exclude": ["node_modules", "examples", "**/*.spec.ts", "build"]
 }

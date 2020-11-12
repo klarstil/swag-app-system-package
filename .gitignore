@@ -1,6 +1,7 @@
 .idea
 db.json
 build
+artifacts
 
 # Logs
 logs
