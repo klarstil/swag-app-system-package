@@ -1,8 +1,8 @@
-import ShopRepository, { iShop } from '@swag-app-system-package/repository/shop-repository';
+import ShopRepository, { Shop } from '@swag-app-system-package/repository/shop-repository';
 import { InMemoryAdapter} from "../database/in-memory-adapter";
 
 describe('ShopRepostory', () => {
-    const shop: iShop = {
+    const shop: Shop = {
         shopId: 'shopId',
         shopUrl: 'http://shop.url',
         shopSecret: 'shopSecret',
