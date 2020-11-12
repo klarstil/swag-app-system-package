@@ -1,8 +1,8 @@
 import {Express, Request, Response} from "express";
 import Authenticator from "./authenficator";
 import ShopRepository from "./repository/shop-repository";
-import { AbstractAdapter } from './repository/adapter/abstract-adapter';
-import LowDbAdapter from "./repository/adapter/lowdb-adapter";
+import { ConnectionInterface} from "./database/connection-interface";
+import LowDbAdapter from "./database/lowdb-adapter";
 
 declare interface iAppTemplateOptions {
     confirmRoute: string,
@@ -16,14 +16,29 @@ class AppTemplate {
     options: iAppTemplateOptions;
     shopRepository: ShopRepository;
 
-    constructor(app: Express, connector: any, options: iAppTemplateOptions) {
+    /**
+     * Constructor which initializes the app template which represents an
+     * {@link https://www.npmjs.com/package/express express} wrapper.
+     *
+     * @param {Express} app
+     * @param {ConnectionInterface} adapter
+     * @param {iAppTemplateOptions} options
+     */
+    constructor(app: Express, adapter: ConnectionInterface, options: iAppTemplateOptions) {
         this.app = app;
         this.options = options;
-        this.shopRepository = new ShopRepository(connector);
+        this.shopRepository = new ShopRepository(adapter);
 
         this.registerExpressRoutes(this.app);
     }
 
+    /**
+     * Registers the necessary routes for the authentification of the application against the app system into
+     * the provided express app.
+     *
+     * @param {Express} app
+     * @returns {boolean}
+     */
     registerExpressRoutes(app: Express): boolean {
         app.get(this.options.registerRoute, this.onRegisterRoute.bind(this));
         app.post(this.options.confirmRoute, this.onConfirmRoute.bind(this));
@@ -31,7 +46,15 @@ class AppTemplate {
         return true;
     }
 
-    onRegisterRoute(request: Request, response: Response) {
+    /**
+     * Route handler for the registration route which verifies the register request from the app system and creates
+     * a new shop.
+     *
+     * @param {Request} request
+     * @param {Response} response
+     * @returns {void}
+     */
+    onRegisterRoute(request: Request, response: Response): void {
         const shopUrl = request.query['shop-url'] as string;
         const shopId = request.query['shop-id'] as string;
 
@@ -68,7 +91,15 @@ class AppTemplate {
         response.json(proof);
     }
 
-    onConfirmRoute(request: Request, response: Response) {
+    /**
+     * Route handler for the confirmation route which verifies the post request from the app system and updates the
+     * associated shop with the credentials from the handshake.
+     *
+     * @param {Request} request
+     * @param {Response} response
+     * @returns {void}
+     */
+    onConfirmRoute(request: Request, response: Response): void {
         const shopSecret = this.shopRepository.getSecretByShopId(request.body.shopId);
 
         if (!Authenticator.authenticatePostRequest({
@@ -92,6 +123,6 @@ export {
     AppTemplate,
     Authenticator,
     ShopRepository,
-    AbstractAdapter,
+    ConnectionInterface,
     LowDbAdapter
 };

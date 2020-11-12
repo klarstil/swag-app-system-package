@@ -1,5 +1,5 @@
-import { AbstractAdapter } from "./abstract-adapter";
-import { iShop } from "../shop-repository";
+import { ConnectionInterface } from "./connection-interface";
+import { iShop } from "../repository/shop-repository";
 
 // @ts-ignore
 import low from 'lowdb';
@@ -9,7 +9,7 @@ import FileSync from 'lowdb/adapters/FileSync';
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-export default class LowDbAdapter implements AbstractAdapter {
+export default class LowDbAdapter implements ConnectionInterface {
     tableName: string;
 
     constructor(tableName: string = 'shops') {

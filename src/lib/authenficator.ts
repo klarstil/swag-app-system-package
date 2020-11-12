@@ -1,5 +1,4 @@
-import { Request } from "express";
-import {createHmac, randomBytes} from "crypto";
+import { createHmac, randomBytes } from "crypto";
 
 declare interface iGenerateProof {
     shopId: string;
@@ -31,6 +30,16 @@ declare interface iAuthenticatePostRequest {
 }
 
 export default class Authenticator {
+    /**
+     * Verifies the register request from the app system.
+     *
+     * @param {String} shopId
+     * @param {String} shopUrl
+     * @param {String} signature
+     * @param {Number} timestamp
+     * @param {String} appSecret
+     * @returns {boolean}
+     */
     static authenticateRegisterRequest({
         shopId,
         shopUrl,
@@ -51,6 +60,14 @@ export default class Authenticator {
         return hash === signature;
     }
 
+    /**
+     * Verifies post requests from the app system.
+     *
+     * @param {String} signature
+     * @param {String} body
+     * @param {String} shopSecret
+     * @returns {boolean}
+     */
     static authenticatePostRequest({
         signature,
         body,
@@ -70,13 +87,20 @@ export default class Authenticator {
             )
             .digest("hex");
 
-        console.log({ hash });
-        console.log({ signature });
-        console.log({ body });
-
         return hash === signature;
     }
 
+    /**
+     * Generates the necessary proof for the handshake with the app system.
+     *
+     * @param {String} shopId
+     * @param {String} shopUrl
+     * @param {String} shopSecret
+     * @param {String} appSecret
+     * @param {String} name
+     * @param {String} confirmationUrl
+     * @returns {iGenerateProofAnswer}
+     */
     static generateProof({
         shopId,
         shopUrl,
@@ -100,6 +124,11 @@ export default class Authenticator {
         };
     }
 
+    /**
+     * Generates a secret for each shop which will be used for the handshake
+     *
+     * @returns {boolean}
+     */
     static generateSecretForShop(): string {
         return randomBytes(16).toString('hex');
     }

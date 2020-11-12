@@ -1,6 +1,6 @@
-import { iShop } from "../shop-repository";
+import { iShop } from "../repository/shop-repository";
 
-export declare interface AbstractAdapter {
+export declare interface ConnectionInterface {
     create(values: object): void,
     get(shopId: string): iShop
     delete(shopId: string): any,
