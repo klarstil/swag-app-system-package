@@ -1,4 +1,4 @@
-import {ConnectionInterface} from "./connection-interface";
+import { ConnectionInterface } from "./connection-interface";
 import { Collection } from "mongodb";
 import { iShop } from "../repository/shop-repository";
 
