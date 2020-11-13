@@ -87,7 +87,7 @@ describe('ShopRepostory', () => {
 
         expect(credentials).toEqual({
             shopUrl: shop.shopUrl,
-            appSecret: shop.shopSecret as string,
+            apiKey: shop.apiKey as string,
             secretKey: shop.secretKey as string,
         });
     });
