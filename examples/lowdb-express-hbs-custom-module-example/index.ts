@@ -24,8 +24,12 @@ const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
 
 // Add your custom routes for action buttons
 appTemplate.registerActionButton('/restock-product').then((params) => {
-    console.log('params', params);
+    console.log('params');
 }).catch(err => console.log(err));
+
+appTemplate.registerCustomModule('/my-own-config-module').then(({ response }) => {
+    response.json({ success: true });
+});
 
 appTemplate.on('app.deleted', () => {
     console.log('onAppDeleted');

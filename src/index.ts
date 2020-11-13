@@ -23,7 +23,12 @@ declare interface ActionButtonsParams {
     source: object,
     data: object,
     meta: object
-};
+}
+
+declare interface CustomModuleParams extends ActionButtonsParams {
+    request: Request,
+    response: Response
+}
 
 class AppTemplate extends EventEmitter {
     app: Express;
@@ -187,7 +192,7 @@ class AppTemplate extends EventEmitter {
     }
 
     /**
-     * Registers to the express application which will be triggered when the user pressed the corresponding action
+     * Register a url to the express application which will be triggered when the user pressed the corresponding action
      * button in the administration.
      *
      * @param {String} url
@@ -218,6 +223,38 @@ class AppTemplate extends EventEmitter {
     }
 
     /**
+     * Register a url which will be triggered when a custom module in the administration will be opened.
+     *
+     * @param {String} url
+     * @returns {Promise<CustomModuleParams>}
+     */
+    registerCustomModule(url: string): Promise<CustomModuleParams> {
+        return new Promise((resolve, reject) => {
+            this.app.get(url, async (request: Request, response: Response) => {
+                const shopId = request.query['shop-id'] as string;
+                const signature = request.query['shopware-shop-signature'] as string;
+                const isValid = this.authenticateGetRequest(request, shopId);
+
+                const params: CustomModuleParams = {
+                    source: request.body.source,
+                    data: request.body.data,
+                    meta: request.body.meta,
+                    signature,
+                    request,
+                    response
+                };
+
+                if (!isValid) {
+                    reject(params);
+                    return;
+                }
+
+                resolve(params);
+            });
+        });
+    }
+
+    /**
      * Helper method which validates if a post request is authenticated correctly.
      *
      * @private
@@ -234,6 +271,19 @@ class AppTemplate extends EventEmitter {
             body: JSON.stringify(request.body).replace(/\//g, (str) => {
                 return `\\${str}`;
             })
+        });
+    }
+
+    async authenticateGetRequest(request: Request, shopId: string): Promise<boolean> {
+        const shopSecret = await this.shopRepository.getSecretByShopId(shopId);
+        const signature = request.query['shopware-shop-signature'] as string;
+        const query = request.query;
+        const queryString = `shop-id=${shopId}&shop-url=${query['shop-url']}&timestamp=${query.timestamp}`;
+
+        return Authenticator.authenticateGetRequest({
+            signature,
+            shopSecret,
+            queryString
         });
     }
 }

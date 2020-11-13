@@ -29,6 +29,12 @@ declare interface iAuthenticatePostRequest {
     shopSecret: string
 }
 
+declare interface AuthenticateGetRequest {
+    signature: string,
+    queryString: string,
+    shopSecret: string
+}
+
 export class Authenticator {
     /**
      * Verifies the register request from the app system.
@@ -82,6 +88,32 @@ export class Authenticator {
             .update(
                 Buffer.from(
                     body,
+                    "utf-8"
+                )
+            )
+            .digest("hex");
+
+        return hash === signature;
+    }
+
+    /**
+     * Verifies get requests from the app system.
+     *
+     * @param {String} signature
+     * @param {String} queryString
+     * @param {String} shopSecret
+     * @returns {boolean}
+     */
+    static authenticateGetRequest({ signature, queryString, shopSecret }: AuthenticateGetRequest): boolean {
+        if (!signature || signature.length <= 0) {
+            return false;
+        }
+
+        const hmac = createHmac("sha256", shopSecret);
+        const hash = hmac
+            .update(
+                Buffer.from(
+                    queryString,
                     "utf-8"
                 )
             )
