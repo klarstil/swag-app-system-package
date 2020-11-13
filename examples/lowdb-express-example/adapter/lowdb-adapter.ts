@@ -1,5 +1,5 @@
 import { ConnectionInterface } from "@shopware-ag/swag-app-system-package";
-import { iShop } from "@shopware-ag/swag-app-system-package/build/repository/shop-repository";
+import { Shop } from "@shopware-ag/swag-app-system-package/build/repository/shop-repository";
 
 // @ts-ignore
 import low from 'lowdb';
@@ -17,7 +17,7 @@ export default class LowDbAdapter implements ConnectionInterface {
         this.tableName = tableName;
     }
 
-    create(values: iShop): Promise<void> {
+    create(values: Shop): Promise<void> {
         db.get(this.tableName)
             .push(values)
             .write();
@@ -25,8 +25,8 @@ export default class LowDbAdapter implements ConnectionInterface {
         return Promise.resolve();
     }
 
-    get(shopId: string): Promise<iShop> {
-        const result: iShop = db.get(this.tableName)
+    get(shopId: string): Promise<Shop> {
+        const result: Shop = db.get(this.tableName)
             .find({ shopId: shopId })
             .value();
 
@@ -41,7 +41,7 @@ export default class LowDbAdapter implements ConnectionInterface {
         return Promise.resolve();
     }
 
-    update(values: iShop): Promise<void> {
+    update(values: Shop): Promise<void> {
         db.get(this.tableName)
             .find({ shopId: values.shopId })
             .assign(values)

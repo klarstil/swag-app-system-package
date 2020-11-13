@@ -2,7 +2,7 @@
 import { config } from 'dotenv';
 config();
 
-import express from "express";
+import express, { Request, Response } from "express";
 import { AppTemplate } from "@shopware-ag/swag-app-system-package";
 import LowDbAdapter from "./adapter/lowdb-adapter";
 const PORT = process.env.APP_PORT || 8000;
@@ -21,6 +21,11 @@ const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
     appSecret: process.env.APP_SECRET as string,
     appName: process.env.APP_NAME as string
 });
+
+// Add your custom routes for action buttons
+appTemplate.registerActionButton('/restock-product').then((params) => {
+    console.log('params', params);
+}).catch(err => console.log(err));
 
 appTemplate.on('app.deleted', () => {
     console.log('onAppDeleted');

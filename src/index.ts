@@ -18,6 +18,13 @@ declare interface iAppTemplateOptions {
     appName: string
 }
 
+declare interface ActionButtonsParams {
+    signature: string,
+    source: object,
+    data: object,
+    meta: object
+};
+
 class AppTemplate extends EventEmitter {
     app: Express;
     options: iAppTemplateOptions;
@@ -177,6 +184,37 @@ class AppTemplate extends EventEmitter {
         this.emit(request.body.data.event, request.body);
 
         response.end();
+    }
+
+    /**
+     * Registers to the express application which will be triggered when the user pressed the corresponding action
+     * button in the administration.
+     *
+     * @param {String} url
+     * @returns {Promise<ActionButtonsParams>}
+     */
+    registerActionButton(url: string): Promise<ActionButtonsParams> {
+        return new Promise((resolve, reject) => {
+            this.app.post(url, async (request: Request, response: Response) => {
+                const isValid = await this.authenticatePostRequest(request, request.body.source.shopId);
+
+                const params: ActionButtonsParams = {
+                    signature: request.get('shopware-shop-signature') as string,
+                    source: request.body.source,
+                    data: request.body.data,
+                    meta: request.body.meta
+                };
+
+                if (!isValid) {
+                    response.status(401).end();
+                    reject(params);
+                    return;
+                }
+
+                response.end();
+                resolve(params);
+            });
+        });
     }
 
     /**
