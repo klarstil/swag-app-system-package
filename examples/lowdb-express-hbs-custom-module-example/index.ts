@@ -1,5 +1,6 @@
 // Import dotenv and import the .env file
 import { config } from 'dotenv';
+import { resolve, join } from "path";
 config();
 
 import express from "express";
@@ -9,6 +10,8 @@ const PORT = process.env.APP_PORT || 8000;
 
 const app = express();
 app.use(express.json());
+app.set('view engine', 'hbs');
+app.set('views', resolve(join(__dirname, '../views')));
 
 const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
     confirmRoute: '/confirm',
@@ -24,11 +27,13 @@ const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
 
 // Add your custom routes for action buttons
 appTemplate.registerActionButton('/restock-product').then((params) => {
-    console.log('params');
+    console.log('params', params);
 }).catch(err => console.log(err));
 
 appTemplate.registerCustomModule('/my-own-config-module').then(({ response }) => {
-    response.json({ success: true });
+    response.render('index');
+}).catch(({ response }) => {
+    response.status(401).end();
 });
 
 appTemplate.on('app.deleted', () => {
