@@ -198,6 +198,7 @@ To do so, register your custom module in your `manifest.xml` as the following:
 The custom module has to return a HTML document as a response. To do so, we have to hook up Express with a template engine. In the following example we're using `hbs`:
 
 ```typescript
+import { resolve, join } from "path";
 import express from "express";
 
 const app = express();
@@ -207,7 +208,10 @@ app.set('views', resolve(join(__dirname, '../views')));
 
 // ... AppTemplate initialization
 
-appTemplate.registerCustomModule('/my-own-config-module', (isValidRequest: boolean, { response }: CustomModuleParams) => {
+appTemplate.registerCustomModule('/my-own-config-module', (
+		isValidRequest: boolean, 
+		{ response }: CustomModuleParams
+	) => {
     if (!isValidRequest) {
         response.status(401).end();
         return;
@@ -219,7 +223,7 @@ appTemplate.registerCustomModule('/my-own-config-module', (isValidRequest: boole
 
 The template we're rendering needs to communicate with the app system that it got loaded correctly. To do so, we have to send a message using the `postMessage` API:
 
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -236,6 +240,67 @@ The template we're rendering needs to communicate with the app system that it go
     <h1>I'm a custom module</h1>
 </body>
 </html>
+```
+
+## Advanced
+
+### Custom connection adapter
+
+The app system exports a [conenction interface](src/database/connection-interface.ts) which allows you to create your own connection adapters. In the following example, we used `lowdb` to interact with a simple JSON database:
+
+```typescript
+import { ConnectionInterface } from "@shopware-ag/swag-app-system-package";
+import { Shop } from "@shopware-ag/swag-app-system-package/build/repository/shop-repository";
+
+// @ts-ignore
+import low from 'lowdb';
+// @ts-ignore
+import FileSync from 'lowdb/adapters/FileSync';
+
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+
+export default class LowDbAdapter implements ConnectionInterface {
+    tableName: string;
+
+    constructor(tableName: string = 'shops') {
+        db.defaults({ shops: [] }).write();
+        this.tableName = tableName;
+    }
+
+    create(values: Shop): Promise<void> {
+        db.get(this.tableName)
+            .push(values)
+            .write();
+
+        return Promise.resolve();
+    }
+
+    get(shopId: string): Promise<Shop> {
+        const result: Shop = db.get(this.tableName)
+            .find({ shopId: shopId })
+            .value();
+
+        return Promise.resolve(result);
+    }
+
+    delete(shopId: string): Promise<void> {
+        db.get(this.tableName)
+            .remove({ shopId: shopId })
+            .write();
+
+        return Promise.resolve();
+    }
+
+    update(values: Shop): Promise<void> {
+        db.get(this.tableName)
+            .find({ shopId: values.shopId })
+            .assign(values)
+            .write();
+
+        return Promise.resolve();
+    }
+}
 ```
 
 
