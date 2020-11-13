@@ -31,7 +31,9 @@
         "url": "https://github.com/klarstil/swag-app-system-package.git"
     },
     "license": "MIT",
-    "dependencies": {},
+    "dependencies": {
+        "axios": "^0.21.0"
+    },
     "devDependencies": {
         "@types/express": "^4.17.9",
         "@types/jest": "^26.0.15",

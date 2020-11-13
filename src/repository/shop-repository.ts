@@ -1,16 +1,19 @@
 import { ConnectionInterface } from "../database/connection-interface";
 
-export declare interface Shop {
+export declare interface ShopInfo {
     shopId: string
     shopUrl: string,
-    shopSecret: string
+}
+
+export declare interface Shop extends ShopInfo {
+    shopSecret: string;
     secretKey?: string;
     apiKey?: string,
 }
 
 declare interface Credentials {
     shopUrl: string,
-    appSecret: string,
+    apiKey: string,
     secretKey: string,
 }
 
@@ -88,7 +91,7 @@ export class ShopRepository {
 
         return {
             shopUrl: shop.shopUrl,
-            appSecret: shop.shopSecret as string,
+            apiKey: shop.apiKey as string,
             secretKey: shop.secretKey as string,
         };
     }
