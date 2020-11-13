@@ -4,7 +4,7 @@ import { resolve, join } from "path";
 config();
 
 import express from "express";
-import { AppTemplate } from "@shopware-ag/swag-app-system-package";
+import { AppTemplate, CustomModuleParams, ActionButtonsParams } from "@shopware-ag/swag-app-system-package";
 import LowDbAdapter from "./adapter/lowdb-adapter";
 const PORT = process.env.APP_PORT || 8000;
 
@@ -26,14 +26,22 @@ const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
 });
 
 // Add your custom routes for action buttons
-appTemplate.registerActionButton('/restock-product').then((params) => {
-    console.log('params', params);
-}).catch(err => console.log(err));
+appTemplate.registerActionButton('/restock-product', (isValidRequest: boolean, { meta, source, data }: ActionButtonsParams) => {
+    if (!isValidRequest) {
+        console.log('request was not signed correctly');
+        return;
+    }
 
-appTemplate.registerCustomModule('/my-own-config-module').then(({ response }) => {
+    console.log({ meta, source, data });
+});
+
+appTemplate.registerCustomModule('/my-own-config-module', (isValidRequest: boolean, { response }: CustomModuleParams) => {
+    if (!isValidRequest) {
+        response.status(401).end();
+        return;
+    }
+
     response.render('index');
-}).catch(({ response }) => {
-    response.status(401).end();
 });
 
 appTemplate.on('app.deleted', () => {

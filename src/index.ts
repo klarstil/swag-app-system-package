@@ -18,14 +18,14 @@ declare interface iAppTemplateOptions {
     appName: string
 }
 
-declare interface ActionButtonsParams {
+export declare interface ActionButtonsParams {
     signature: string,
     source: object,
     data: object,
     meta: object
 }
 
-declare interface CustomModuleParams extends ActionButtonsParams {
+export declare interface CustomModuleParams extends ActionButtonsParams {
     request: Request,
     response: Response
 }
@@ -196,29 +196,28 @@ class AppTemplate extends EventEmitter {
      * button in the administration.
      *
      * @param {String} url
+     * @param {Function} callback
      * @returns {Promise<ActionButtonsParams>}
      */
-    registerActionButton(url: string): Promise<ActionButtonsParams> {
-        return new Promise((resolve, reject) => {
-            this.app.post(url, async (request: Request, response: Response) => {
-                const isValid = await this.authenticatePostRequest(request, request.body.source.shopId);
+    registerActionButton(url: string, callback: Function): void {
+        this.app.post(url, async (request: Request, response: Response) => {
+            const isValid = await this.authenticatePostRequest(request, request.body.source.shopId);
 
-                const params: ActionButtonsParams = {
-                    signature: request.get('shopware-shop-signature') as string,
-                    source: request.body.source,
-                    data: request.body.data,
-                    meta: request.body.meta
-                };
+            const params: ActionButtonsParams = {
+                signature: request.get('shopware-shop-signature') as string,
+                source: request.body.source,
+                data: request.body.data,
+                meta: request.body.meta
+            };
 
-                if (!isValid) {
-                    response.status(401).end();
-                    reject(params);
-                    return;
-                }
+            if (!isValid) {
+                response.status(401).end();
+                callback(isValid, params);
+                return;
+            }
 
-                response.end();
-                resolve(params);
-            });
+            response.end();
+            callback(isValid, params);
         });
     }
 
@@ -226,31 +225,25 @@ class AppTemplate extends EventEmitter {
      * Register a url which will be triggered when a custom module in the administration will be opened.
      *
      * @param {String} url
+     * @param {Function} callback
      * @returns {Promise<CustomModuleParams>}
      */
-    registerCustomModule(url: string): Promise<CustomModuleParams> {
-        return new Promise((resolve, reject) => {
-            this.app.get(url, async (request: Request, response: Response) => {
-                const shopId = request.query['shop-id'] as string;
-                const signature = request.query['shopware-shop-signature'] as string;
-                const isValid = this.authenticateGetRequest(request, shopId);
+    registerCustomModule(url: string, callback: Function): void {
+        this.app.get(url, async (request: Request, response: Response) => {
+            const shopId = request.query['shop-id'] as string;
+            const signature = request.query['shopware-shop-signature'] as string;
+            const isValid = this.authenticateGetRequest(request, shopId);
 
-                const params: CustomModuleParams = {
-                    source: request.body.source,
-                    data: request.body.data,
-                    meta: request.body.meta,
-                    signature,
-                    request,
-                    response
-                };
+            const params: CustomModuleParams = {
+                source: request.body.source,
+                data: request.body.data,
+                meta: request.body.meta,
+                signature,
+                request,
+                response
+            };
 
-                if (!isValid) {
-                    reject(params);
-                    return;
-                }
-
-                resolve(params);
-            });
+            callback(isValid, params);
         });
     }
 
