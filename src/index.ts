@@ -14,6 +14,7 @@ declare interface iAppTemplateOptions {
     appUpdatedRoute?: string,
     appActivatedRoute?: string,
     appDeactivatedRoute?: string,
+    appDeploymentRoute: string,
     appSecret: string,
     appName: string
 }
@@ -123,7 +124,7 @@ class AppTemplate extends EventEmitter {
             name,
             shopSecret,
             appSecret: this.options.appSecret,
-            confirmationUrl: `http://localhost:8000${this.options.confirmRoute}`
+            confirmationUrl: `${this.options.appDeploymentRoute}${this.options.confirmRoute}`
         });
 
         response.json(proof);
