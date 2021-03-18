@@ -264,6 +264,8 @@ class AppTemplate extends EventEmitter {
             signature: request.get('shopware-shop-signature') as string,
             body: JSON.stringify(request.body).replace(/\//g, (str) => {
                 return `\\${str}`;
+            }).replace(/[\u007F-\uFFFF]/g, function (chr) {
+              return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
             })
         });
     }
