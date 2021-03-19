@@ -19,6 +19,7 @@ const run = async () => {
     const collection = database.collection('shops');
 
     new AppTemplate(app, new MongoDbAdapter(collection), {
+        appDeploymentRoute: `http://localhost:${PORT}`,
         confirmRoute: '/confirm',
         registerRoute: '/registration',
         appSecret: process.env.APP_SECRET as string,

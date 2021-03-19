@@ -14,6 +14,7 @@ app.set('view engine', 'hbs');
 app.set('views', resolve(join(__dirname, '../views')));
 
 const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
+    appDeploymentRoute: `http://localhost:${PORT}`,
     confirmRoute: '/confirm',
     registerRoute: '/registration',
     appDeletedRoute: '/app-deleted-webhook',

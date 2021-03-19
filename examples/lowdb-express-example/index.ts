@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 
 const appTemplate = new AppTemplate(app, new LowDbAdapter(), {
+    appDeploymentRoute: `http://localhost:${PORT}`,
     confirmRoute: '/confirm',
     registerRoute: '/registration',
     appDeletedRoute: '/app-deleted-webhook',

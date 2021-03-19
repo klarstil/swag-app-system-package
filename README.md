@@ -41,9 +41,10 @@ const run = async () => {
 
     // Run the app template
     new AppTemplate(app, new MongoDbAdapter(collection), {
+        appDeploymentRoute: 'http://localhost:8000',
         confirmRoute: '/confirm',
         registerRoute: '/registration',
-        appSecret: 'mySecret'
+        appSecret: 'mySecret',
         appName: 'MyCoolApp'
     });
 
